@@ -1,0 +1,90 @@
+{
+  "name": "Gestão do Conhecimento",
+  "id": "20250317172745",
+  "children": [
+    {
+      "name": "Conceitos Fundamentais",
+      "id": "20250317172745",
+      "children": [
+        {
+          "name": "Conhecimento Tácito",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Conhecimento Explícito",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Conversão de Conhecimento",
+          "id": "20250317172745",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Processos",
+      "id": "20250317172745",
+      "children": [
+        {
+          "name": "Criação de Conhecimento",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Armazenamento",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Compartilhamento",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Aplicação",
+          "id": "20250317172745",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Ferramentas",
+      "id": "20250317172745",
+      "children": [
+        {
+          "name": "Sistemas de GC",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Comunidades de Prática",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Taxonomias e Ontologias",
+          "id": "20250317172745",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Métricas e Avaliação",
+      "id": "20250317172745",
+      "children": [
+        {
+          "name": "ROI do Conhecimento",
+          "id": "20250317172745",
+          "children": []
+        },
+        {
+          "name": "Modelos de Maturidade",
+          "id": "20250317172745",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

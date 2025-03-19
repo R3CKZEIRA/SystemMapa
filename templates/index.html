@@ -198,6 +198,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <!-- Tabs Navigation -->
+                 
                 <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
@@ -225,6 +226,11 @@
                         </button>
                     </li>
                 </ul>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ai-tab" data-bs-toggle="tab" data-bs-target="#ai" type="button" role="tab" aria-controls="ai" aria-selected="false">
+                        <i class="fas fa-robot me-2"></i>Geração por IA
+                    </button>
+                </li>
 
                 <!-- Tab Content -->
                 <div class="tab-content" id="mainTabsContent">
@@ -247,6 +253,54 @@
                                             <i class="fas fa-info-circle me-2"></i>
                                             Para começar, crie um novo mapa ou carregue um dos exemplos disponíveis.
                                         </div>
+            <!-- AI Tab -->
+<div class="tab-pane fade" id="ai" role="tabpanel" aria-labelledby="ai-tab">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-robot me-2"></i>Geração de Mapa por Inteligência Artificial
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <p class="card-text mb-4">
+                        Digite um tópico e a IA irá pesquisar e criar automaticamente um mapa mental estruturado com informações relevantes.
+                    </p>
+                    
+                    <div class="mb-3">
+                        <label for="ai-topic" class="form-label">Tópico para Pesquisa:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="ai-topic" placeholder="Ex: Cachorro, Inteligência Artificial, Astronomia...">
+                            <button class="btn btn-primary" onclick="generateWithAI()">
+                                <i class="fas fa-magic me-2"></i>Gerar Mapa
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            A IA irá pesquisar informações sobre o tópico e criar um mapa mental estruturado.
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Após a geração, você poderá editar o mapa normalmente usando as outras abas.
+                    </div>
+                    
+                    <div id="ai-message" class="alert hidden mt-3"></div>
+                    
+                    <div class="mt-4">
+                        <h5>Exemplos de Tópicos:</h5>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setAITopic('Cachorro')">Cachorro</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setAITopic('Inteligência Artificial')">Inteligência Artificial</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setAITopic('Astronomia')">Astronomia</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setAITopic('Nutrição')">Nutrição</button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="setAITopic('Música')">Música</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                                         
                                         <!-- Create New Map -->
                                         <div class="card mb-4">
@@ -750,6 +804,52 @@
                 }
             });
         });
+
+        // Função para gerar mapa com IA
+function generateWithAI() {
+    const topic = document.getElementById('ai-topic').value;
+    
+    if (!topic) {
+        showMessage('ai-message', 'Por favor, informe um tópico para pesquisa.', 'danger');
+        return;
+    }
+    
+    // Mostrar mensagem de carregamento
+    showMessage('ai-message', 'Gerando mapa de conhecimento... Isso pode levar alguns segundos.', 'info');
+    
+    fetch('/generate_with_ai', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'topic': topic
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            showMessage('ai-message', data.error, 'danger');
+        } else {
+            showMessage('ai-message', data.message, 'success');
+            
+            // Mudar para a aba de visualização
+            setTimeout(() => {
+                openTab('view-tab');
+                updateTreeView();
+                refreshMapImage();
+            }, 1000);
+        }
+    })
+    .catch(error => {
+        showMessage('ai-message', 'Erro ao gerar mapa com IA: ' + error, 'danger');
+    });
+}
+
+// Função para definir o tópico a partir dos exemplos
+function setAITopic(topic) {
+    document.getElementById('ai-topic').value = topic;
+}
     </script>
 </body>
 </html>

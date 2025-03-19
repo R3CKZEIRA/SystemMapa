@@ -178,7 +178,7 @@ def create_example_knowledge_map(theme):
     
     return km
 
-# Função para criar visualização do mapa de conhecimento
+# Função para criar visualização do mapa de conhecimento (orientação horizontal)
 def create_knowledge_map(structure, level=0, parent=None, G=None, pos=None, node_count=None):
     if G is None:
         G = nx.Graph()
@@ -191,12 +191,13 @@ def create_knowledge_map(structure, level=0, parent=None, G=None, pos=None, node
     current_node = f"{level}_{node_count['level'][level]}"
     G.add_node(current_node, name=structure["name"], level=level)
     
-    # Posicionamento dos nós em níveis
+    # Posicionamento dos nós em níveis (horizontal - da esquerda para direita)
     if level == 0:
         pos[current_node] = (0, 0)
     else:
         siblings = node_count["level"][level]
-        pos[current_node] = (siblings - (len(structure.get("children", [])) / 2), -level)
+        # Invertemos x e y para orientação horizontal
+        pos[current_node] = (level, siblings - (len(structure.get("children", [])) / 2))
     
     if parent is not None:
         G.add_edge(parent, current_node)
@@ -209,11 +210,11 @@ def create_knowledge_map(structure, level=0, parent=None, G=None, pos=None, node
     
     return G, pos
 
-# Função para renderizar o mapa de conhecimento como imagem
+# Função para renderizar o mapa de conhecimento como imagem (corrigida)
 def render_knowledge_map_image(structure):
     G, pos = create_knowledge_map(structure)
     
-    plt.figure(figsize=(12, 8))
+    plt.figure(figsize=(14, 10))
     
     # Desenhar nós por nível com cores diferentes
     node_colors = []
@@ -224,16 +225,22 @@ def render_knowledge_map_image(structure):
         level = G.nodes[node]["level"]
         if level == 0:
             node_colors.append("#7c3aed")  # Roxo para o nó raiz
-            node_sizes.append(1500)
+            node_sizes.append(2000)
         else:
             node_colors.append("#8b5cf6")  # Roxo mais claro para os outros nós
-            node_sizes.append(1200)
+            node_sizes.append(1500 - level * 100)  # Tamanho diminui com o nível
         
         labels[node] = G.nodes[node]["name"]
     
+    # Ajustar o tamanho dos nós com base no comprimento do texto
+    for node in G.nodes():
+        name_length = len(G.nodes[node]["name"])
+        idx = list(G.nodes()).index(node)
+        node_sizes[idx] = max(1000, name_length * 100)
+    
     nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=node_sizes, alpha=0.8)
-    nx.draw_networkx_edges(G, pos, edge_color="#8b5cf6", width=2, alpha=0.5)
-    nx.draw_networkx_labels(G, pos, labels, font_size=10, font_color="white")
+    nx.draw_networkx_edges(G, pos, edge_color="#8b5cf6", width=2, alpha=0.5, arrows=True, arrowsize=15)
+    nx.draw_networkx_labels(G, pos, labels, font_size=10, font_color="white", font_weight="bold")
     
     plt.axis("off")
     plt.tight_layout()
@@ -245,6 +252,160 @@ def render_knowledge_map_image(structure):
     plt.close()
     
     return buf
+
+# Função para simular uma resposta da IA (para demonstração)
+def simulate_ai_response(topic):
+    # Mapas pré-definidos para alguns tópicos comuns
+    if topic.lower() == "cachorro":
+        return json.dumps({
+            "name": "Cachorro",
+            "children": [
+                {
+                    "name": "Raças",
+                    "children": [
+                        {"name": "Pequeno Porte", "children": [
+                            {"name": "Poodle"},
+                            {"name": "Chihuahua"},
+                            {"name": "Shih Tzu"}
+                        ]},
+                        {"name": "Médio Porte", "children": [
+                            {"name": "Border Collie"},
+                            {"name": "Bulldog"},
+                            {"name": "Beagle"}
+                        ]},
+                        {"name": "Grande Porte", "children": [
+                            {"name": "Pastor Alemão"},
+                            {"name": "Labrador"},
+                            {"name": "Golden Retriever"}
+                        ]}
+                    ]
+                },
+                {
+                    "name": "Cuidados",
+                    "children": [
+                        {"name": "Alimentação", "children": [
+                            {"name": "Ração"},
+                            {"name": "Dieta Natural"},
+                            {"name": "Suplementos"}
+                        ]},
+                        {"name": "Saúde", "children": [
+                            {"name": "Vacinação"},
+                            {"name": "Vermifugação"},
+                            {"name": "Check-up Veterinário"}
+                        ]},
+                        {"name": "Higiene", "children": [
+                            {"name": "Banho"},
+                            {"name": "Escovação"},
+                            {"name": "Corte de Unhas"}
+                        ]}
+                    ]
+                },
+                {
+                    "name": "Comportamento",
+                    "children": [
+                        {"name": "Treinamento", "children": [
+                            {"name": "Obediência Básica"},
+                            {"name": "Socialização"},
+                            {"name": "Truques"}
+                        ]},
+                        {"name": "Linguagem Corporal", "children": [
+                            {"name": "Rabo Abanando"},
+                            {"name": "Postura de Brincadeira"},
+                            {"name": "Sinais de Estresse"}
+                        ]},
+                        {"name": "Necessidades", "children": [
+                            {"name": "Exercício Físico"},
+                            {"name": "Estímulo Mental"},
+                            {"name": "Afeto e Atenção"}
+                        ]}
+                    ]
+                },
+                {
+                    "name": "História e Evolução",
+                    "children": [
+                        {"name": "Origem", "children": [
+                            {"name": "Domesticação do Lobo"},
+                            {"name": "Seleção Artificial"},
+                            {"name": "Coevolução com Humanos"}
+                        ]},
+                        {"name": "Funções Históricas", "children": [
+                            {"name": "Caça"},
+                            {"name": "Pastoreio"},
+                            {"name": "Guarda"}
+                        ]},
+                        {"name": "Papel na Sociedade Moderna", "children": [
+                            {"name": "Animal de Companhia"},
+                            {"name": "Cães de Serviço"},
+                            {"name": "Terapia Assistida"}
+                        ]}
+                    ]
+                }
+            ]
+        })
+    else:
+        # Estrutura genérica para outros tópicos
+        return json.dumps({
+            "name": topic,
+            "children": [
+                {
+                    "name": f"Aspectos de {topic}",
+                    "children": [
+                        {"name": "Característica 1"},
+                        {"name": "Característica 2"},
+                        {"name": "Característica 3"}
+                    ]
+                },
+                {
+                    "name": f"Tipos de {topic}",
+                    "children": [
+                        {"name": "Tipo 1"},
+                        {"name": "Tipo 2"},
+                        {"name": "Tipo 3"}
+                    ]
+                },
+                {
+                    "name": f"História de {topic}",
+                    "children": [
+                        {"name": "Origem"},
+                        {"name": "Desenvolvimento"},
+                        {"name": "Estado Atual"}
+                    ]
+                },
+                {
+                    "name": f"Aplicações de {topic}",
+                    "children": [
+                        {"name": "Uso 1"},
+                        {"name": "Uso 2"},
+                        {"name": "Uso 3"}
+                    ]
+                }
+            ]
+        })
+
+# Função para consultar a API de IA e gerar um mapa de conhecimento
+def generate_knowledge_map_with_ai(topic):
+    try:
+        # Para fins de demonstração, usaremos uma resposta simulada
+        # Em produção, substitua isso pela chamada real à API
+        ai_response = simulate_ai_response(topic)
+        
+        # Processar a resposta da IA
+        try:
+            # Extrair o JSON da resposta
+            json_str = ai_response
+            knowledge_data = json.loads(json_str)
+            
+            # Criar um novo mapa de conhecimento
+            km = KnowledgeMap(topic)
+            km.root = KnowledgeNode.from_dict(knowledge_data)
+            
+            return km, None
+            
+        except json.JSONDecodeError as e:
+            return None, f"Erro ao processar resposta da IA: {str(e)}"
+            
+    except Exception as e:
+        return None, f"Erro ao gerar mapa de conhecimento com IA: {str(e)}"
 
 # Variável global para armazenar o mapa atual
 current_map = None
@@ -346,6 +507,21 @@ def get_map_image():
     
     buf = render_knowledge_map_image(current_map.root.to_dict())
     return buf.getvalue(), 200, {'Content-Type': 'image/png'}
+
+@app.route('/generate_with_ai', methods=['POST'])
+def generate_with_ai():
+    global current_map
+    
+    topic = request.form.get('topic')
+    if not topic:
+        return jsonify({"error": "Por favor, informe um tópico para pesquisa."})
+    
+    km, error = generate_knowledge_map_with_ai(topic)
+    if error:
+        return jsonify({"error": error})
+    
+    current_map = km
+    return jsonify({"message": f"Mapa de conhecimento sobre '{topic}' gerado com sucesso!"})
 
 if __name__ == '__main__':
     app.run(debug=True)
